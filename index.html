@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>iPhone 5 Camera</title>
+  <meta name="description" content="Turn any photo into a 2012 iPhone 5 shot: purple flare, blown-out skies, soft detail and real JPEG grit. Runs entirely on your phone.">
+  <meta name="theme-color" content="#2a2c30">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="iPhone 5 Cam">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app" id="app" data-state="empty">
+    <header class="masthead">
+      <h1 class="title">iPhone 5 Camera</h1>
+      <p class="lede">Your photo, the way a 2012 iPhone 5 would have taken it.</p>
+    </header>
+
+    <section class="stage" aria-label="Photo">
+      <div class="viewfinder" id="viewfinder">
+        <canvas id="view" class="shot" aria-label="Developed photo" role="img"></canvas>
+        <canvas id="orig" class="shot shot-original" aria-hidden="true"></canvas>
+        <span class="badge" id="origBadge" aria-hidden="true">Original</span>
+        <span class="marker" id="marker" aria-hidden="true"></span>
+
+        <div class="empty" id="empty">
+          <div class="flare-demo" aria-hidden="true">
+            <span class="sun"></span>
+            <span class="haze"></span>
+            <span class="beam"></span>
+            <span class="ghost"></span>
+          </div>
+          <div class="empty-copy">
+            <button class="btn btn-primary" id="pickEmpty" type="button">Choose a photo</button>
+            <p class="small">Daylight shots with the sun or a bright sky in them get the full purple flare.</p>
+          </div>
+        </div>
+
+        <div class="busy" id="busy" hidden>
+          <span class="busy-dot" aria-hidden="true"></span>
+          <span id="busyText">Developing</span>
+        </div>
+      </div>
+
+      <p class="hint" id="hint" hidden>Tap the photo to move the purple flare. Hold it to see the original.</p>
+      <p class="error" id="error" role="alert" hidden></p>
+    </section>
+
+    <section class="controls" id="controls" aria-label="Adjustments" hidden>
+      <div class="looks" id="looks" role="radiogroup" aria-label="Look"></div>
+
+      <div class="sliders" id="sliders">
+        <div class="slider" data-key="strength">
+          <label for="s-strength">Strength</label>
+          <output for="s-strength"></output>
+          <input type="range" id="s-strength" min="0" max="100" step="1">
+        </div>
+        <div class="slider" data-key="warmth">
+          <label for="s-warmth">Warmth</label>
+          <output for="s-warmth"></output>
+          <input type="range" id="s-warmth" min="-100" max="100" step="1">
+        </div>
+        <div class="slider" data-key="flare">
+          <label for="s-flare">Purple flare</label>
+          <button class="link" id="flareAuto" type="button" hidden>Auto position</button>
+          <output for="s-flare"></output>
+          <input type="range" id="s-flare" min="0" max="100" step="1">
+        </div>
+        <div class="slider" data-key="grain">
+          <label for="s-grain">Grain</label>
+          <output for="s-grain"></output>
+          <input type="range" id="s-grain" min="0" max="100" step="1">
+        </div>
+        <div class="slider" data-key="softness">
+          <label for="s-softness">Softness</label>
+          <output for="s-softness"></output>
+          <input type="range" id="s-softness" min="0" max="100" step="1">
+        </div>
+        <div class="slider" data-key="compression">
+          <label for="s-compression">JPEG compression</label>
+          <output for="s-compression"></output>
+          <input type="range" id="s-compression" min="0" max="100" step="1">
+        </div>
+      </div>
+
+      <div class="options">
+        <div class="option">
+          <span class="option-label" id="shapeLabel">Shape</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="shapeLabel" id="shape">
+            <button type="button" role="radio" data-aspect="original">Original</button>
+            <button type="button" role="radio" data-aspect="4:3">4:3</button>
+            <button type="button" role="radio" data-aspect="1:1">Square</button>
+          </div>
+        </div>
+        <label class="option switch-row">
+          <span>
+            White border with caption
+            <small>“Shot on iPhone 5” under the photo</small>
+          </span>
+          <input type="checkbox" class="switch" id="frame">
+        </label>
+        <label class="option switch-row">
+          <span>
+            Show as iPhone 5 in Photos
+            <small>Adds iPhone 5 camera details. Location is never included.</small>
+          </span>
+          <input type="checkbox" class="switch" id="tag">
+        </label>
+      </div>
+    </section>
+
+    <footer class="actionbar" id="actionbar" hidden>
+      <button class="btn btn-quiet" id="pick" type="button">New photo</button>
+      <button class="btn btn-primary" id="save" type="button">Save photo</button>
+    </footer>
+
+    <input type="file" id="file" accept="image/*" hidden>
+  </main>
+
+  <dialog class="result" id="result" aria-labelledby="resultTitle">
+    <div class="result-inner">
+      <h2 class="result-title" id="resultTitle">Developed</h2>
+      <p class="small" id="resultMeta"></p>
+      <img class="result-img" id="resultImg" alt="Your developed iPhone 5 photo">
+      <p class="small">Or press and hold the photo to save it.</p>
+      <div class="result-actions">
+        <button class="btn btn-quiet" id="done" type="button">Done</button>
+        <button class="btn btn-primary" id="share" type="button">Save to Photos</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
